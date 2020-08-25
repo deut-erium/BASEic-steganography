@@ -175,7 +175,7 @@ if __name__ == "__main__":
     PARSER = ArgumentParser(description="")
     PARSER.add_argument(
         '--input',
-        help='read text directly from',
+        help='read a single line directly from input',
         action="store_true")
     PARSER.add_argument(
         '--show',
