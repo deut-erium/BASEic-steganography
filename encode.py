@@ -1,8 +1,9 @@
-"""inter-base steganography 
+"""inter-base steganography
 producing base32 and base64 decodable strings"""
-from base64 import b64encode, b64decode, b32decode
+from base64 import b64encode, b64decode
 import string
 from itertools import product
+from argparse import ArgumentParser
 
 CHARSET = string.printable.encode()
 B32_CHARSET = (string.ascii_uppercase + '234567').encode()
@@ -171,6 +172,20 @@ def master_encode(strng: str) -> bytes:
 
 
 if __name__ == "__main__":
+    PARSER = ArgumentParser(description="")
+    PARSER.add_argument(
+        '--input',
+        help='read text directly from',
+        action="store_true")
+    PARSER.add_argument(
+        '--show',
+        help='shows the transformed input which results in correct encoding',
+        action="store_true")
+    PARSER.add_argument(
+        '--file',
+        help='reading text from file for conversion',
+        action="append")
+    ARGS = PARSER.parse_args()
     TEST_STRING = """Steganography  is the practice of concealing a file,
      message, image, or video within another file, message, image, or video.
     The word steganography comes from Greek steganographia, which combines
@@ -184,9 +199,15 @@ if __name__ == "__main__":
     implementations of steganography that lack a shared secret are forms
     of security through obscurity, and key-dependent steganographic schemes
     adhere to Kerckhoffs's principle."""
+    if ARGS.file:
+        with open(ARGS.file[0], 'rb') as inp_file:
+            TEST_STRING = inp_file.read()
+    else:
+        TEST_STRING = input("input the line to encode:\n")
     ENCODED_STRING = master_encode(TEST_STRING)
-    print(b64decode(ENCODED_STRING).decode())
-    print("On base32 decoding: {}".format(b32decode(ENCODED_STRING)))
+    print("ENCODED STRING: {}".format(ENCODED_STRING))
+    if ARGS.show:
+        print("Transformed string: {}".format(b64decode(ENCODED_STRING)))
     # WTBVICAJV2VSZSBFWHBFY3RJIG4JOSBGTGFHNSBCVXQJYTFMICAJWTBVIDZFVCBJNSB3ZTFS\
-    #ZCBCYXNFNSBCYSAJTWJPMDJMZSAJTWVOVCBET25UICAJICB3T3JSWSBJVHMJIGYJVW4JIG4JZXZ\
-    #FIHIJVCNFTGVTNSAJ
+    # ZCBCYXNFNSBCYSAJTWJPMDJMZSAJTWVOVCBET25UICAJICB3T3JSWSBJVHMJIGYJVW4JIG4JZXZ\
+    # FIHIJVCNFTGVTNSAJ
